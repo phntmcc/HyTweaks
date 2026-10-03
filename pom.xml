@@ -6,11 +6,10 @@
 
     <groupId>dev.phntm</groupId>
     <artifactId>HyTweaks</artifactId>
-    <!-- CI sets the release version from the git tag: mvn -Drevision=1.2.3 verify -->
-    <version>${revision}</version>
+    <!-- Bumped by the release commit; the release workflow checks the tag matches. -->
+    <version>1.0.0</version>
 
     <properties>
-        <revision>1.0.0</revision>
         <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hytale.server.version>0.6.8</hytale.server.version>

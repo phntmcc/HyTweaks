@@ -17,12 +17,27 @@ jobs:
           distribution: temurin
           java-version: "25"
           cache: maven
+      # The tag must match pom.xml, and the release notes are that version's CHANGELOG.md section.
+      - name: Check version and notes
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          pom="$(mvn -B -q help:evaluate -Dexpression=project.version -DforceStdout)"
+          if [ "$pom" != "$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match pom.xml version $pom."
+            exit 1
+          fi
+          awk -v head="## [$version]" 'index($0, head) == 1 { found = 1; next } /^## \[|^\[.+\]: / { found = 0 } found' \
+            CHANGELOG.md > "${RUNNER_TEMP}/notes.md"
+          if ! grep -q '[^[:space:]]' "${RUNNER_TEMP}/notes.md"; then
+            echo "::error::CHANGELOG.md has no entry for $version."
+            exit 1
+          fi
       - name: Build
-        run: mvn -B verify -Drevision="${GITHUB_REF_NAME#v}"
+        run: mvn -B verify
       - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           version="${GITHUB_REF_NAME#v}"
           gh release create "$GITHUB_REF_NAME" "target/HyTweaks-${version}.jar" \
-            --title "HyTweaks ${version}" --generate-notes
+            --title "HyTweaks ${version}" --notes-file "${RUNNER_TEMP}/notes.md"
