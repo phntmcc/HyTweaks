@@ -4,6 +4,8 @@ All notable changes to HyTweaks. Versions follow [Semantic Versioning](https://s
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-03
+
 ### Fixed
 
 - Tool replace no longer loses the replacement when a tool breaks partway through a swing that hits several blocks, such as a sickle sweeping crops. Also covers pickaxes, hatchets, hoes and staffs.
@@ -21,5 +23,6 @@ First release.
 - Map refresh: the world map shows your builds within about 2 seconds.
 - Sleep percentage: the night is skipped once half the players are in bed.
 
-[Unreleased]: https://github.com/phntmcc/HyTweaks/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/phntmcc/HyTweaks/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/phntmcc/HyTweaks/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/phntmcc/HyTweaks/releases/tag/v1.0.0
