@@ -1,0 +1,27 @@
+name: build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+      - name: Verify
+        run: |
+          set -o pipefail
+          mvn -B verify | tee "${RUNNER_TEMP}/verify.log"
+      # Zero-deprecation baseline: a new warning means an engine API we use changed.
+      - name: Fail on deprecation warnings
+        run: |
+          if grep -E '^\[WARNING\].*(deprecat|marked for removal)' "${RUNNER_TEMP}/verify.log"; then
+            echo "::error::New deprecation or removal warnings."
+            exit 1
+          fi

@@ -1,0 +1,7 @@
+{
+	"Group": "phntm",
+	"Name": "HyTweaks",
+	"Version": "${project.version}",
+	"Main": "dev.phntm.hytweaks.HyTweaks",
+	"ServerVersion": ">=0.6.8"
+}

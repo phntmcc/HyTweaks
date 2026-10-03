@@ -1,0 +1,12 @@
+target/
+*.jar
+
+.idea/
+.vscode/
+.settings/
+.cursor/
+*.iml
+
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="340" viewBox="0 0 1280 340" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#14263d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="340" rx="24" fill="url(#bg)"/>
+
+  <!-- Bottom slab -->
+  <polygon points="230,135 325.3,190 230,245 134.7,190" fill="#7dd3c0"/>
+  <polygon points="134.7,190 230,245 230,300 134.7,245" fill="#3f8f86"/>
+  <polygon points="230,245 325.3,190 325.3,245 230,300" fill="#2c6e67"/>
+
+  <!-- Translucent preview of the top slab, about to complete the block -->
+  <g fill="#ffffff" fill-opacity="0.16" stroke="#e2fdf8" stroke-opacity="0.8" stroke-width="2" stroke-dasharray="7 6" stroke-linejoin="round">
+    <polygon points="230,58 325.3,113 230,168 134.7,113"/>
+    <polygon points="134.7,113 230,168 230,223 134.7,168"/>
+    <polygon points="230,168 325.3,113 325.3,168 230,223"/>
+  </g>
+
+  <text x="400" y="168" font-size="92" font-weight="800" fill="#f8fafc">HyTweaks</text>
+  <text x="404" y="222" font-size="30" fill="#94a3b8">Vanilla Hytale, minus the friction.</text>
+  <text x="404" y="272" font-size="22" fill="#5eead4">Stack refill · Tool replace · Slab placement · Live map · Sleep %</text>
+</svg>
