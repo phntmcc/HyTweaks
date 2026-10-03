@@ -20,6 +20,7 @@ import com.hypixel.hytale.server.core.asset.type.blocktype.config.BlockType;
 import com.hypixel.hytale.server.core.asset.type.blocktype.config.RotationTuple;
 import com.hypixel.hytale.server.core.entity.InteractionManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
+import com.hypixel.hytale.server.core.entity.movement.MovementStatesComponent;
 import com.hypixel.hytale.server.core.event.events.ecs.PlaceBlockEvent;
 import com.hypixel.hytale.server.core.inventory.ActiveSlotInventoryComponent;
 import com.hypixel.hytale.server.core.inventory.InventoryComponent;
@@ -44,12 +45,17 @@ import java.util.Set;
 
 /**
  * Places slabs by where on the face you aim, and completes a slab when you aim into its empty half.
+ * Crouching locks the orientation shown as the crouch began (or the first one aimed at after), so
+ * a row of slabs can be laid without aiming at each zone.
  *
  * <p>Merges follow what the player was aiming at just before the click. When the target cell
  * already holds a slab the client never asks to place a block, and for faces vanilla's own merge
  * recognises, vanilla has already completed the slab (silently) before any system sees the click.
  */
 public final class SlabPlacement extends EntityEventSystem<EntityStore, PlaceBlockEvent> implements Feature {
+    /** The half each crouching player has locked. */
+    private final Map<Ref<EntityStore>, Integer> locks = Players.map();
+
     public SlabPlacement() {
         super(PlaceBlockEvent.class);
     }
@@ -82,7 +88,8 @@ public final class SlabPlacement extends EntityEventSystem<EntityStore, PlaceBlo
             @Nonnull PlaceBlockEvent event
     ) {
         Ref<EntityStore> player = chunk.getReferenceTo(index);
-        Slabs.Plan plan = Slabs.plan(store.getExternalData().getWorld(), player, commandBuffer, event.getItemInHand());
+        Slabs.Plan plan = Slabs.plan(store.getExternalData().getWorld(), player, commandBuffer, event.getItemInHand(),
+                locks.getOrDefault(player, -1));
         if (plan == null) {
             return;
         }
@@ -99,7 +106,7 @@ public final class SlabPlacement extends EntityEventSystem<EntityStore, PlaceBlo
      * Each tick, per player: what a held slab would do (shown by the ghost), and whether a new
      * right-click started, which then acts on the previous tick's plan.
      */
-    private static final class Aim extends EntityTickingSystem<EntityStore> {
+    private final class Aim extends EntityTickingSystem<EntityStore> {
         private final ComponentType<EntityStore, InteractionManager> managers =
                 InteractionModule.get().getInteractionManagerComponent();
         private final Set<Dependency<EntityStore>> beforeVanilla =
@@ -139,7 +146,18 @@ public final class SlabPlacement extends EntityEventSystem<EntityStore, PlaceBlo
             Ref<EntityStore> player = chunk.getReferenceTo(index);
             World world = store.getExternalData().getWorld();
             State last = states.get(player);
-            Slabs.Plan plan = Slabs.plan(world, player, commandBuffer, InventoryComponent.getItemInHand(commandBuffer, player));
+            MovementStatesComponent movement = chunk.getComponent(index, MovementStatesComponent.getComponentType());
+            boolean crouching = movement != null && movement.getMovementStates().crouching;
+            Integer locked = crouching ? locks.get(player) : null;
+            if (!crouching) {
+                locks.remove(player);
+            } else if (locked == null && last != null && last.plan() != null && !last.plan().merge()) {
+                // Lock what was shown the tick before: crouching lowers the eye, which can move the aim to another zone.
+                locked = last.plan().half();
+                locks.put(player, locked);
+            }
+            Slabs.Plan plan = Slabs.plan(world, player, commandBuffer, InventoryComponent.getItemInHand(commandBuffer, player),
+                    locked == null ? -1 : locked);
             var chains = chunk.getComponent(index, managers).getChains();
             if (last == null && plan == null && chains.isEmpty()) {
                 return;

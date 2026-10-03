@@ -40,12 +40,14 @@ final class Slabs {
     record Plan(int x, int y, int z, BlockType block, int rotation, int half, boolean merge) {
     }
 
+    /** @param locked the half every slab goes into whatever face is aimed at (no merging), or -1 to follow the aim */
     @Nullable
     static Plan plan(
             @Nonnull World world,
             @Nonnull Ref<EntityStore> player,
             @Nonnull ComponentAccessor<EntityStore> store,
-            @Nullable ItemStack held
+            @Nullable ItemStack held,
+            int locked
     ) {
         if (ItemStack.isEmpty(held) || !held.getItem().hasBlockType()) {
             return null;
@@ -64,11 +66,11 @@ final class Slabs {
             return null;
         }
         int[] cell = hit.cell();
-        if (hit.interior() && isSlab(blockAt(world, cell[0], cell[1], cell[2]), slab)) {
+        if (locked < 0 && hit.interior() && isSlab(blockAt(world, cell[0], cell[1], cell[2]), slab)) {
             return merge(cell, slab);
         }
         int[] target = hit.target();
-        int half = SlabZones.index(SlabZones.half(hit));
+        int half = locked >= 0 ? locked : SlabZones.index(SlabZones.half(hit));
         Block occupant = blockAt(world, target[0], target[1], target[2]);
         if (occupant == null) {
             return null;
@@ -77,7 +79,7 @@ final class Slabs {
             return new Plan(target[0], target[1], target[2], slab, rotations[half], half, false);
         }
         // Aiming into the empty half of a matching slab completes it.
-        boolean oppositeHalf = isSlab(occupant, slab) && occupant.rotation() == rotations[half ^ 1];
+        boolean oppositeHalf = locked < 0 && isSlab(occupant, slab) && occupant.rotation() == rotations[half ^ 1];
         return oppositeHalf ? merge(target, slab) : null;
     }
 

@@ -19,7 +19,7 @@ Nothing is needed on the client. Install it once on a server or single-player wo
 | **Stack refill** | When the stack in your hand or utility slot runs out (placing, eating, throwing), the same item moves in from your storage, backpack or hotbar. Smaller stacks are used first, so partial stacks get tidied up. Dropping your last item never triggers it. Items you pick up or craft also top up a matching stack in your utility slot first, so collected torches go straight to your off hand. |
 | **Tool replace** | When your held tool, weapon or shield breaks, a working one of the same kind takes its place. The broken one is kept for repair. |
 | **Durability warning** | A notification and sound when your held tool, shield or a piece of armor you're wearing drops to 10% durability, before it breaks mid-dig or mid-fight. |
-| **Slab placement** | Aim at the centre or an edge of a face to choose how a slab is placed, and aim into a slab's empty half to complete it into a full block. A translucent box previews the result. |
+| **Slab placement** | Aim at the centre or an edge of a face to choose how a slab is placed, and aim into a slab's empty half to complete it into a full block. Crouch to lock the current orientation, so a whole row of slabs goes the same way wherever you aim. A translucent box previews the result. |
 | **Map refresh** | The world map shows your builds within about 2 seconds instead of after a rejoin. Only changed chunks are redrawn. |
 | **Sleep percentage** | The night is skipped once half the players are in bed, instead of waiting for everyone. AFK and Creative players aren't counted, so they can't hold the night up. When everyone is asleep, vanilla's own sleep plays as normal. |
 

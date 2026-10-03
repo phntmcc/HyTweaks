@@ -10,6 +10,7 @@ All notable changes to HyTweaks. Versions follow [Semantic Versioning](https://s
 - Durability warning also covers the armor you're wearing and your utility slot.
 - Stack refill and tool replace also work for the utility slot, so torches refill and a broken shield is swapped for a working one.
 - Items you pick up or craft top up a matching stack in your utility slot first, so collected torches go straight to your off hand.
+- Slab placement: crouch to lock the current orientation, so a whole row of slabs goes the same way wherever you aim.
 
 ## [1.0.1] - 2026-10-03
 
