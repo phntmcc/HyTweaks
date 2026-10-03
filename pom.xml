@@ -7,7 +7,7 @@
     <groupId>dev.phntm</groupId>
     <artifactId>HyTweaks</artifactId>
     <!-- Bumped by the release commit; the release workflow checks the tag matches. -->
-    <version>1.0.1</version>
+    <version>1.1.0</version>
 
     <properties>
         <maven.compiler.release>25</maven.compiler.release>

@@ -4,6 +4,10 @@ All notable changes to HyTweaks. Versions follow [Semantic Versioning](https://s
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-03
+
+Tweaks for your off hand, your armor and busy servers. Torches you pick up go straight to your off hand and refill it when they run out, broken shields are replaced, armor warns you before it breaks, crouching locks your slab orientation, and AFK players can no longer hold up the night.
+
 ### Added
 
 - Sleep percentage ignores AFK and Creative players, so they can't stop the night being skipped. Set how long before a player counts as AFK with `afkMinutes`.
@@ -31,6 +35,7 @@ First release.
 - Map refresh: the world map shows your builds within about 2 seconds.
 - Sleep percentage: the night is skipped once half the players are in bed.
 
-[Unreleased]: https://github.com/phntmcc/HyTweaks/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/phntmcc/HyTweaks/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/phntmcc/HyTweaks/compare/v1.0.1...v1.1.0
 [1.0.1]: https://github.com/phntmcc/HyTweaks/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/phntmcc/HyTweaks/releases/tag/v1.0.0
