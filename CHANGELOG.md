@@ -7,6 +7,7 @@ All notable changes to HyTweaks. Versions follow [Semantic Versioning](https://s
 ### Added
 
 - Sleep percentage ignores AFK and Creative players, so they can't stop the night being skipped. Set how long before a player counts as AFK with `afkMinutes`.
+- Durability warning also covers the armor you're wearing.
 
 ## [1.0.1] - 2026-10-03
 

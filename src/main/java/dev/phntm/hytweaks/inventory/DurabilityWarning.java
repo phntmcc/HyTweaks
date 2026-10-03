@@ -19,10 +19,14 @@ import dev.phntm.hytweaks.core.Feature;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-/** Warn once, with a sound, as the held tool's durability crosses the threshold. */
+/** Warn once, with a sound, as the held tool's or a worn armor piece's durability crosses the threshold. */
 public final class DurabilityWarning extends ActiveSlotSystem implements Feature {
     private double threshold;
     private String sound;
+
+    public DurabilityWarning() {
+        super(true);
+    }
 
     @Nonnull
     @Override
@@ -41,7 +45,7 @@ public final class DurabilityWarning extends ActiveSlotSystem implements Feature
     void onChange(
             @Nonnull Ref<EntityStore> player,
             @Nonnull CommandBuffer<EntityStore> commandBuffer,
-            @Nonnull ItemContainer hotbar,
+            @Nonnull ItemContainer container,
             short slot,
             @Nullable ItemStack before,
             @Nullable ItemStack after
