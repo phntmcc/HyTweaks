@@ -21,7 +21,7 @@ Nothing is needed on the client. Install it once on a server or single-player wo
 | **Durability warning** | A notification and sound when your held tool drops to 10% durability, before it breaks mid-dig. |
 | **Slab placement** | Aim at the centre or an edge of a face to choose how a slab is placed, and aim into a slab's empty half to complete it into a full block. A translucent box previews the result. |
 | **Map refresh** | The world map shows your builds within about 2 seconds instead of after a rejoin. Only changed chunks are redrawn. |
-| **Sleep percentage** | The night is skipped once half the players are in bed, instead of waiting for everyone. When everyone is asleep, vanilla's own sleep plays as normal. |
+| **Sleep percentage** | The night is skipped once half the players are in bed, instead of waiting for everyone. AFK and Creative players aren't counted, so they can't hold the night up. When everyone is asleep, vanilla's own sleep plays as normal. |
 
 ### Slab placement
 
@@ -48,7 +48,7 @@ Requires Hytale server 0.6.8 or newer.
   "refill":            { "enabled": true },
   "toolReplace":       { "enabled": true },
   "durabilityWarning": { "enabled": true, "threshold": 0.1, "sound": "SFX_Item_Break" },
-  "sleepPercentage":   { "enabled": true, "percent": 50 },
+  "sleepPercentage":   { "enabled": true, "percent": 50, "afkMinutes": 5 },
   "slabPlacement":     { "enabled": true, "preview": true, "previewOpacity": 0.15 },
   "mapRefresh":        { "enabled": true, "intervalSeconds": 2 }
 }
@@ -59,6 +59,7 @@ Requires Hytale server 0.6.8 or newer.
 | `durabilityWarning.threshold` | `0.1` | Warn when durability falls to this fraction. |
 | `durabilityWarning.sound` | `SFX_Item_Break` | Sound event played with the warning. |
 | `sleepPercentage.percent` | `50` | Share of players in bed needed to skip the night. |
+| `sleepPercentage.afkMinutes` | `5` | Players who haven't moved or looked around for this long aren't counted. `0` counts everyone. |
 | `slabPlacement.preview` | `true` | Show the translucent placement preview. |
 | `slabPlacement.previewOpacity` | `0.15` | Preview opacity, from 0 to 1. |
 | `mapRefresh.intervalSeconds` | `2` | How often changed map areas are redrawn. Raise this on very large servers. |
