@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * When the held tool or weapon breaks, swap in a working one from storage or backpack: the same item
+ * When the held tool, weapon or shield breaks, swap in a working one from storage or backpack: the same item
  * first, otherwise the highest-level one of the same kind. The broken one goes back where the replacement
  * was, so it can be repaired later.
  */
@@ -37,7 +37,7 @@ public final class ToolReplace extends ActiveSlotSystem implements Feature {
     private final Map<Ref<EntityStore>, Pending> pending = Players.map();
 
     /** Waits for the chains running at the break, which may still write the broken item back (a sickle, per crop). */
-    private record Pending(ItemContainer hotbar, short slot, List<InteractionChain> chains) {
+    private record Pending(ItemContainer container, short slot, List<InteractionChain> chains) {
     }
 
     @Nonnull
@@ -56,7 +56,7 @@ public final class ToolReplace extends ActiveSlotSystem implements Feature {
     void onChange(
             @Nonnull Ref<EntityStore> player,
             @Nonnull CommandBuffer<EntityStore> commandBuffer,
-            @Nonnull ItemContainer hotbar,
+            @Nonnull ItemContainer container,
             short slot,
             @Nullable ItemStack before,
             @Nullable ItemStack after
@@ -65,7 +65,7 @@ public final class ToolReplace extends ActiveSlotSystem implements Feature {
             return;
         }
         InteractionManager manager = commandBuffer.getComponent(player, managers);
-        pending.put(player, new Pending(hotbar, slot, manager == null ? List.of() : List.copyOf(manager.getChains().values())));
+        pending.put(player, new Pending(container, slot, manager == null ? List.of() : List.copyOf(manager.getChains().values())));
     }
 
     private final class Swap extends EntityTickingSystem<EntityStore> {
@@ -96,25 +96,25 @@ public final class ToolReplace extends ActiveSlotSystem implements Feature {
                 }
             }
             pending.remove(player);
-            commandBuffer.run(s -> replace(s, player, swap.hotbar(), swap.slot()));
+            commandBuffer.run(s -> replace(s, player, swap.container(), swap.slot()));
         }
     }
 
     private static void replace(@Nonnull Store<EntityStore> store, @Nonnull Ref<EntityStore> player,
-                                @Nonnull ItemContainer hotbar, short slot) {
-        ItemStack broken = hotbar.getItemStack(slot);
+                                @Nonnull ItemContainer container, short slot) {
+        ItemStack broken = container.getItemStack(slot);
         if (ItemStack.isEmpty(broken) || !broken.isBroken()) {
             return;
         }
         String id = broken.getItemId();
         String kind = kind(broken.getItem(), id);
-        Inv.Slot source = Inv.find(store, player, slot,
+        Inv.Slot source = Inv.find(store, player, container, slot,
                 s -> !s.isBroken() && (s.getItemId().equals(id) || kind != null && kind.equals(kind(s.getItem(), s.getItemId()))),
                 Comparator.comparing((ItemStack s) -> s.getItemId().equals(id))
                         .thenComparingInt(s -> s.getItem().getItemLevel())
                         .thenComparingDouble(ItemStack::getDurability));
         if (source != null) {
-            hotbar.setItemStackForSlot(slot, source.stack());
+            container.setItemStackForSlot(slot, source.stack());
             source.container().setItemStackForSlot(source.index(), broken);
         }
     }

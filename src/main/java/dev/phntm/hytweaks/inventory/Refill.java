@@ -22,10 +22,13 @@ import javax.annotation.Nullable;
 import java.util.Comparator;
 import java.util.Map;
 
-/** When the held stack is used up, pull the same item from storage, backpack or the rest of the hotbar into the slot. */
+/** When a held hotbar or utility stack is used up, pull the same item from storage, backpack or the hotbar into the slot. */
 public final class Refill extends ActiveSlotSystem implements Feature {
-    /** The hotbar slot each player last dropped from, until their next held-slot change; dropping the last item must not refill. */
-    private final Map<Ref<EntityStore>, Short> drops = Players.map();
+    /** The slot each player last dropped from, until their next held-slot change; dropping the last item must not refill. */
+    private final Map<Ref<EntityStore>, Drop> drops = Players.map();
+
+    private record Drop(ItemContainer container, short slot) {
+    }
 
     @Nonnull
     @Override
@@ -37,34 +40,35 @@ public final class Refill extends ActiveSlotSystem implements Feature {
     public void register(@Nonnull HyTweaks plugin, @Nonnull Config.Section config) {
         plugin.getEntityStoreRegistry().registerSystem(this);
         plugin.getEntityStoreRegistry().registerSystem(new DropWatcher());
+        plugin.getEntityStoreRegistry().registerSystem(new UtilityPickup());
     }
 
     @Override
     void onChange(
             @Nonnull Ref<EntityStore> player,
             @Nonnull CommandBuffer<EntityStore> commandBuffer,
-            @Nonnull ItemContainer hotbar,
+            @Nonnull ItemContainer container,
             short slot,
             @Nullable ItemStack before,
             @Nullable ItemStack after
     ) {
-        Short dropped = drops.remove(player);
+        Drop dropped = drops.remove(player);
         // Used up = the last single item vanished. Whole stacks vanishing are moves or drops.
         if (ItemStack.isEmpty(before) || before.getQuantity() != 1 || !ItemStack.isEmpty(after)
-                || dropped != null && dropped == slot) {
+                || dropped != null && dropped.container() == container && dropped.slot() == slot) {
             return;
         }
         String itemId = before.getItemId();
         commandBuffer.run(store -> {
-            if (!ItemStack.isEmpty(hotbar.getItemStack(slot))) {
+            if (!ItemStack.isEmpty(container.getItemStack(slot))) {
                 return;
             }
             // Smallest stack first, so stray partial stacks get used up.
-            Inv.Slot source = Inv.find(store, player, slot, s -> s.getItemId().equals(itemId),
+            Inv.Slot source = Inv.find(store, player, container, slot, s -> s.getItemId().equals(itemId),
                     Comparator.comparingInt(ItemStack::getQuantity).reversed());
             if (source != null) {
                 source.container().moveItemStackFromSlotToSlot(
-                        source.index(), source.stack().getQuantity(), hotbar, slot);
+                        source.index(), source.stack().getQuantity(), container, slot);
             }
         });
     }
@@ -88,8 +92,11 @@ public final class Refill extends ActiveSlotSystem implements Feature {
                 @Nonnull CommandBuffer<EntityStore> commandBuffer,
                 @Nonnull DropItemEvent.PlayerRequest event
         ) {
-            if (event.getInventorySectionId() == InventoryComponent.HOTBAR_SECTION_ID) {
-                drops.put(chunk.getReferenceTo(index), event.getSlotId());
+            Ref<EntityStore> player = chunk.getReferenceTo(index);
+            var type = InventoryComponent.getComponentTypeById(event.getInventorySectionId());
+            InventoryComponent section = type == null ? null : commandBuffer.getComponent(player, type);
+            if (section != null) {
+                drops.put(player, new Drop(section.getInventory(), event.getSlotId()));
             }
         }
     }

@@ -23,14 +23,15 @@ final class Inv {
     }
 
     /**
-     * The best stack matching {@code match} in storage, backpack, then the rest of the hotbar
-     * (never {@code hotbarSlot} itself); earlier wins ties.
+     * The best stack matching {@code match} in storage, backpack, then the hotbar (never
+     * {@code slot} of {@code target} itself); earlier wins ties.
      */
     @Nullable
     static Slot find(
             @Nonnull ComponentAccessor<EntityStore> store,
             @Nonnull Ref<EntityStore> player,
-            short hotbarSlot,
+            @Nonnull ItemContainer target,
+            short slot,
             @Nonnull Predicate<ItemStack> match,
             @Nonnull Comparator<ItemStack> better
     ) {
@@ -42,10 +43,9 @@ final class Inv {
             if (component == null) {
                 continue;
             }
-            boolean hotbar = type == InventoryComponent.Hotbar.getComponentType();
             ItemContainer container = component.getInventory();
             for (short i = 0; i < container.getCapacity(); i++) {
-                if (hotbar && i == hotbarSlot) {
+                if (container == target && i == slot) {
                     continue;
                 }
                 ItemStack stack = container.getItemStack(i);

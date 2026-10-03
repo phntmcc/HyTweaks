@@ -7,7 +7,9 @@ All notable changes to HyTweaks. Versions follow [Semantic Versioning](https://s
 ### Added
 
 - Sleep percentage ignores AFK and Creative players, so they can't stop the night being skipped. Set how long before a player counts as AFK with `afkMinutes`.
-- Durability warning also covers the armor you're wearing.
+- Durability warning also covers the armor you're wearing and your utility slot.
+- Stack refill and tool replace also work for the utility slot, so torches refill and a broken shield is swapped for a working one.
+- Items you pick up or craft top up a matching stack in your utility slot first, so collected torches go straight to your off hand.
 
 ## [1.0.1] - 2026-10-03
 

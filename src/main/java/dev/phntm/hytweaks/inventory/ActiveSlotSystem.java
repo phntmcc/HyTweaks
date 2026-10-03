@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Fires for in-place changes to a survival player's held hotbar slot (and, if asked, worn armor):
+ * Fires for in-place changes to a survival player's held hotbar and utility slots (and, if asked, worn armor):
  * using, breaking or wearing an item. Cursor moves arrive as move transactions, not slot
  * transactions, so they never reach {@link #onChange}.
  */
@@ -53,9 +53,10 @@ abstract class ActiveSlotSystem extends EntityEventSystem<EntityStore, Inventory
         if (!(event.getTransaction() instanceof SlotTransaction change) || !change.succeeded()) {
             return;
         }
-        boolean held = event.getComponentType() == InventoryComponent.Hotbar.getComponentType()
-                && event.getInventory() instanceof ActiveSlotInventoryComponent hotbar
-                && change.getSlot() == hotbar.getActiveSlot();
+        boolean held = (event.getComponentType() == InventoryComponent.Hotbar.getComponentType()
+                || event.getComponentType() == InventoryComponent.Utility.getComponentType())
+                && event.getInventory() instanceof ActiveSlotInventoryComponent active
+                && change.getSlot() == active.getActiveSlot();
         if (!held && !(armor && event.getComponentType() == InventoryComponent.Armor.getComponentType())) {
             return;
         }
